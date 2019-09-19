@@ -75,9 +75,8 @@ public class ListaPedidos extends ListActivity {
                 }
                 /** [Fin ]*/
 
-                /** Cargar la lista ui*/
-                pedidosAdapter = new ArrayAdapter<String>(ListaPedidos.this,
-                        R.layout.row_pedido, R.id.row_txt_pedido, pedidos_descripcion);
+                /** Cargar la lista ui*/                    //          Contexto        Where
+                pedidosAdapter = new ArrayAdapter<String>(ListaPedidos.this, R.layout.row_pedido, R.id.row_txt_pedido, pedidos_descripcion);
                 setListAdapter(pedidosAdapter);
                 /**[Fin]*/
             }
@@ -93,8 +92,7 @@ public class ListaPedidos extends ListActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot x: dataSnapshot.getChildren()){
                 //    if ( pedidos_descripcion.contains( x.getKey() ) ){
-                        Log.v("Key:", x.getKey());
-                        Log.v("Vaalue:", x.getValue(Pedido.class).getDescripcion());
+
                         pedidos.put(x.getKey(), x.getValue(Pedido.class));
 
                  //   }
@@ -107,23 +105,6 @@ public class ListaPedidos extends ListActivity {
             }
         });
 
-    }
-
-    public void dummyPedidos(){
-        final DatabaseReference refNodoPedidos = database.getReference().child("pedidos");
-        HashMap<String, Pedido> mapa = new HashMap<String, Pedido>();
-        mapa.put("key_pedido_2", new Pedido( "1", "Lo k sea", 100,
-                new Punto(19393,3992), new Punto(19393,3992),
-                "Hoy", "Mañana", Pedido.SIN_PROCESAR) );
-
-        mapa.put("key_pedido_1", new Pedido( "2", "Tres tortas", 140,
-                new Punto(19393,3992), new Punto(19393,3992),
-                "Hoy", "Mañana", Pedido.SIN_PROCESAR) );
-
-        mapa.put("key_pedido_3", new Pedido( "3", "Awa de mango", 40,
-                new Punto(19393,3992), new Punto(19393,3992),
-                "Hoy", "Mañana", Pedido.SIN_PROCESAR) );
-        refNodoPedidos.setValue(mapa);
     }
 
     @Override

@@ -28,6 +28,8 @@ public class MenuDeliverActivity extends AppCompatActivity {
 
     //GPS
     FusedLocationProviderClient mFusedLocationProviderClient;
+    Button btn_mapa;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,7 @@ public class MenuDeliverActivity extends AppCompatActivity {
         //      iniciarGPS();
 
         // Otras cosas
-        Button btn_mapa = (Button)findViewById(R.id.btn_pedidos_disponibles);
+        btn_mapa= (Button)findViewById(R.id.btn_pedidos_disponibles);
         btn_mapa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

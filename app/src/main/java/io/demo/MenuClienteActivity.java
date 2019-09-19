@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +21,11 @@ public class MenuClienteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_cliente);
 
+        initComponents();
+    }
+
+
+    public void initComponents(){
         // BUTTON Y EVENTOS
         btn_lista_pedidos = (Button) findViewById(R.id.btn_verpedidos);
         btn_lista_pedidos.setOnClickListener(new View.OnClickListener() {
@@ -29,12 +35,20 @@ public class MenuClienteActivity extends AppCompatActivity {
             }
         });
 
+        btn_comprar = (Button) findViewById(R.id.btn_comprar);
+        btn_comprar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //startListaPedidosActivity();
+                Toast.makeText(MenuClienteActivity.this, "Sin Funcionalidad", Toast.LENGTH_SHORT);
+            }
+        });
 
     }
 
     private void startListaPedidosActivity() {
         // Intent intent = new Intent(this, ListaPedidos.class);
-        Intent intent = new Intent(this, ListaPedidos.class);
+        Intent intent = new Intent(this, MapaUbicacionPedido.class);
         startActivity(intent);
     }
 

@@ -19,19 +19,16 @@ public class Pedido implements Serializable {
     private String fecha_entrega;
     private String fecha_realizacion;
 
+    private String deliver_uid;
+
+    private String cliente_uid;
+
     private int status;
 
     public Pedido() {
     }
 
-    public Pedido(String id,
-                  String descripcion,
-                  int costo,
-                  Punto location,
-                  Punto destino,
-                  String fecha_entrega,
-                  String fecha_realizacion,
-                  int status) {
+    public Pedido(String id, String descripcion, int costo, Punto location, Punto destino, String fecha_entrega, String fecha_realizacion, String deliver_uid, String cliente_uid, int status) {
         this.id = id;
         this.descripcion = descripcion;
         this.costo = costo;
@@ -39,6 +36,8 @@ public class Pedido implements Serializable {
         this.destino = destino;
         this.fecha_entrega = fecha_entrega;
         this.fecha_realizacion = fecha_realizacion;
+        this.deliver_uid = deliver_uid;
+        this.cliente_uid = cliente_uid;
         this.status = status;
     }
 
@@ -104,5 +103,21 @@ public class Pedido implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getDeliver_uid() {
+        return deliver_uid;
+    }
+
+    public void setDeliver_uid(String deliver_uid) {
+        this.deliver_uid = deliver_uid;
+    }
+
+    public String getCliente_uid() {
+        return cliente_uid;
+    }
+
+    public void setCliente_uid(String cliente_uid) {
+        this.cliente_uid = cliente_uid;
     }
 }

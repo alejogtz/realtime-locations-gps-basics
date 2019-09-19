@@ -2,14 +2,23 @@ package io.demo;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+
+import java.util.ArrayList;
 import java.util.List;
-//import android.support.v4.app.*;
-//import android.support.v7.app.AppCompatActivity;
+
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 // classes needed to initialize map
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
@@ -37,6 +46,8 @@ import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+
+import io.demo.Models.Pedido;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -70,6 +81,17 @@ public class MapaUbicacionPedido extends AppCompatActivity
     // variables needed to initialize navigation
     private Button button;
 
+    // Firebase
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference;
+
+    // ListView
+    ListView listaTusPedidos;
+    ArrayList<String> lista_uidpedidos;
+    ArrayAdapter<String> pedidos_cliente_adapter;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,18 +101,88 @@ public class MapaUbicacionPedido extends AppCompatActivity
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        // mapboxMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(17.0594169, -96.7216219)));
+        listaTusPedidos = findViewById(R.id.mup_list_pedidos);
 
-        // [Test para poner un marcador]
-//        Point mPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-//                locationComponent.getLastKnownLocation().getLatitude());
-//
-//        GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
-//        if (source != null) {
-//            source.setGeoJson(Feature.fromGeometry(mPoint));
-//        }
+        cargarListaPedidos();
 
     }
+
+    public void cargarViewPedidos(){
+        if (listUids.size() != 0) {
+            pedidos_cliente_adapter = new ArrayAdapter<>(this, R.layout.row_pedido, R.id.row_txt_pedido, listUids);
+            listaTusPedidos.setAdapter(pedidos_cliente_adapter);
+            listaTusPedidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    Log.v("Haz hecho clic", String.valueOf(position));
+                    responderEventoClick(position);
+                }
+            });
+        }else {
+            Toast.makeText(this, "Sorry, No tienes pedidos registrados xD", Toast.LENGTH_LONG).show();
+        }
+
+
+    }
+
+    DatabaseReference refCurrentDeliver;
+    ValueEventListener valueEventDeliver;
+
+    public void responderEventoClick(int position){
+        String uidDeliver = listUids.get(position);
+
+        if(refCurrentDeliver!= null && valueEventDeliver!=null) refCurrentDeliver.removeEventListener(valueEventDeliver);
+        refCurrentDeliver = FirebaseDatabase.getInstance().getReference().child("users").child(uidDeliver);
+
+        valueEventDeliver = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    anadeMarcador( dataSnapshot.child("latitude").getValue(Long.class), dataSnapshot.child("longitude").getValue(Long.class) );
+                }else {
+                    Log.v("Evento Item Click", "Sorry, No existe el deliver");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.v("Evento (Error)", databaseError.getMessage());
+            }
+        };
+
+        refCurrentDeliver.addValueEventListener(valueEventDeliver);
+
+
+
+    }
+
+    ArrayList<Pedido> listPedidos;
+    ArrayList<String> listUids; // Puede ser innecesario // son los uids del deliver
+    public void cargarListaPedidos(){
+        // Se necesita saber la lista de pedidos realizados
+        listPedidos = new ArrayList<>();
+        listUids = new ArrayList<>();
+        String uid =  FirebaseAuth.getInstance().getCurrentUser().getUid();
+        databaseReference = firebaseDatabase.getReference().child("pedidos");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot p: dataSnapshot.getChildren()){
+                    if (p.child("cliente_uid").getValue(String.class).equals( uid ))
+                    {
+                        listPedidos.add(p.getValue(Pedido.class));
+                        listUids.add(p.getValue(Pedido.class).getDeliver_uid()); // Key es el uid del Deliver
+                    }
+                }
+                cargarViewPedidos();
+
+            }
+            @Override public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+        // Se necesita saber el uid de cada pedido
+        // Se necesita iniciar un listener a cada cambio de posicion del usuario con el uid seleccionado
+    }
+
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
@@ -102,21 +194,29 @@ public class MapaUbicacionPedido extends AppCompatActivity
 
                 addDestinationIconSymbolLayer(style);
 
-                mapboxMap.addOnMapClickListener(MapaUbicacionPedido.this);
-                button = findViewById(R.id.startButton);
-                button.setOnClickListener(new View.OnClickListener() {
+
+
+//                mapboxMap.addOnMapClickListener(MapaUbicacionPedido.this)
+//                button = findViewById(R.id.btn_addmarker);
+//                button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        boolean simulateRoute = true;
+//                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+//                                .directionsRoute(currentRoute)
+//                                .shouldSimulateRoute(simulateRoute)
+//                                .build();
+//                        // Call this method with Context from within an Activity
+//                        NavigationLauncher.startNavigation(MapaUbicacionPedido.this, options);
+//                    }
+//                });
+                /*button.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        boolean simulateRoute = true;
-                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                .directionsRoute(currentRoute)
-                                .shouldSimulateRoute(simulateRoute)
-                                .build();
-                        // Call this method with Context from within an Activity
-                        NavigationLauncher.startNavigation(MapaUbicacionPedido.this, options);
+                    public void onClick(View view) {
+
                     }
-                });
-            }
+                });*/
+            }  // ------------> End OnStyleLoaded
         });
     }
 
@@ -138,7 +238,17 @@ public class MapaUbicacionPedido extends AppCompatActivity
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
-        Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+        //anadeMarcador(poin);
+
+        //button.setEnabled(true);
+        //button.setBackgroundResource(R.color.mapboxBlue);
+        return true;
+    }
+
+    //public void anadeMarcador(LatLng point){
+    public void anadeMarcador(long latitude, long longitude){
+        //Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+        Point destinationPoint = Point.fromLngLat(latitude, longitude);
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
 
@@ -148,9 +258,6 @@ public class MapaUbicacionPedido extends AppCompatActivity
         }
 
         getRoute(originPoint, destinationPoint);
-        button.setEnabled(true);
-        button.setBackgroundResource(R.color.mapboxBlue);
-        return true;
     }
 
     private void getRoute(Point origin, Point destination) {

@@ -11,4 +11,5 @@
     <string name="user_location_permission_not_granted">You didn\'t grant location permissions.</string>
     <string name="btn_pedidos_disponibles">Mira los pedidos que nadie ha aceptado</string>
     <string name="btn_verpedidos_aceptados">Mira el destino de los pedidos que aceptaste</string>
+    <string name="btn_addmarker">Añade Marcador</string>
 </resources>

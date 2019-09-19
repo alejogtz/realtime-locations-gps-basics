@@ -84,10 +84,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = null;
 
         if (rol.equals("Cliente")){
+            // intent = new Intent(MainActivity.this, MenuClienteActivity.class);
             intent = new Intent(MainActivity.this, MenuClienteActivity.class);
 
         }else if (rol.equals("Deliver")) {
-            intent = new Intent(MainActivity.this, MenuDeliverActivity.class);
+            //intent = new Intent(MainActivity.this, MenuDeliverActivity.class);
+            intent = new Intent(MainActivity.this, MenuClienteActivity.class);
         }
 
         startActivity(intent);
