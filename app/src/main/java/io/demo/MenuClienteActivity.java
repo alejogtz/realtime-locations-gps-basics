@@ -31,7 +31,7 @@ public class MenuClienteActivity extends AppCompatActivity {
 
         initComponents();
 
-        FakePedidos.insertar();
+        // FakePedidos.insertar();
     }
 
 
@@ -54,22 +54,21 @@ public class MenuClienteActivity extends AppCompatActivity {
     }
 
     private void startListaPedidosActivity() {
-        // Intent intent = new Intent(this, ListaPedidos.class);
-        Intent intent = new Intent(this, MapaUbicacionPedido.class);
+        Intent intent = new Intent(this, ListaPedidos.class);
         startActivity(intent);
     }
 
 
     @Override
     protected void onDestroy() {
-        AuthUI.getInstance()
-         .signOut(this)
-         .addOnCompleteListener(new OnCompleteListener<Void>() {
-         public void onComplete(@NonNull Task<Void> task) {
-         // ...
-         Toast.makeText(MenuClienteActivity.this, "Log out", Toast.LENGTH_SHORT);
-         }
-         });
+//        AuthUI.getInstance()
+//         .signOut(this)
+//         .addOnCompleteListener(new OnCompleteListener<Void>() {
+//         public void onComplete(@NonNull Task<Void> task) {
+//         // ...
+//         Toast.makeText(MenuClienteActivity.this, "Log out", Toast.LENGTH_SHORT);
+//         }
+//         });
         super.onDestroy();
     }
 

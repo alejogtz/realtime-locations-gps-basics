@@ -14,8 +14,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".DetallesPagoActivity"></activity>
         <activity android:name=".CompraActivity" />
-        <activity android:name=".CatalogoComida" />
-
         <service
             android:name=".GpsTracking"
             android:exported="false" />

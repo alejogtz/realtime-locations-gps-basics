@@ -91,14 +91,14 @@ public class MenuDeliverActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                        Toast.makeText(MenuDeliverActivity.this, "Log out", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//        AuthUI.getInstance()
+//                .signOut(this)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        // ...
+//                        Toast.makeText(MenuDeliverActivity.this, "Log out", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
         super.onDestroy();
     }
 

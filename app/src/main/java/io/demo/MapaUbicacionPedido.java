@@ -1,5 +1,6 @@
 package io.demo;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 // classes needed to initialize map
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,6 +60,7 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -80,18 +83,8 @@ public class MapaUbicacionPedido extends AppCompatActivity
     private Button button;
 
     // Firebase
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference nodoPedidos;
-    private DatabaseReference nodoRepartidorActual;
-    private ValueEventListener valueEventDeliver;
-
-    // ListView
-    private ListView ListViewParaPedidos;
-    private ArrayAdapter<Pedido> pedidos_cliente_adapter;
-
-    // Data Alive
-    private ArrayList<Pedido> pedidosDelCliente;
-
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    DatabaseReference nodoUserDeliver;
 
 
     @Override
@@ -99,89 +92,37 @@ public class MapaUbicacionPedido extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_mapa_ubicacion_pedido);
-        // Widgets: Sólo instanciacion.
-        ListViewParaPedidos = findViewById(R.id.mup_list_pedidos);
 
         mapView = findViewById(R.id.mapaView);
         mapView.onCreate(savedInstanceState);
-
         // Inicia el Mapa. <<No es recomendable llamar a una acción despues de esta linea si el mapa no está cargado aún>>
         mapView.getMapAsync(this);
 
-        // Construir la Lista y  cargar el UI
-        // Este metodo lo puedes ver en OnMapReady j3j3
     }
 
-    // TODO: Aqui van los metodos para activar las notificaciones cuando el pedido está cerca xD
-    // [Code HERE]
-
-
-    // Metodos que debieran estar en un ViewModel j3j3. Ay para la próxima xD
-
-    private void setupConfigurationThisActivity(){
-        // Se necesita saber la lista de pedidos realizados
-        pedidosDelCliente = new ArrayList<>();
+    // TODO: Pendiente, no agrega el marcador correctamente xD
+    private void iniciarListenerDeDeliverPosicion(String uid_deliver) {
         // Firebase
-        String uid =  FirebaseAuth.getInstance().getCurrentUser().getUid();
-        nodoPedidos = firebaseDatabase.getReference().child("pedidos");
-        nodoPedidos.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot p : dataSnapshot.getChildren()) {
-                    if (p.child("cliente_uid").getValue(String.class).equals(uid))
-                        pedidosDelCliente.add(p.getValue(Pedido.class));
-                }
-                cargarListViewDePedidos();
-            }
-            @Override public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
-    }
-
-    public void cargarListViewDePedidos(){
-        if (pedidosDelCliente.size() != 0) {
-            // TODO: Crear Adapter Personalizado para los items de Pedido.
-            pedidos_cliente_adapter = new ArrayAdapter<Pedido>(this,
-                    android.R.layout.simple_list_item_1, pedidosDelCliente);
-            ListViewParaPedidos.setAdapter(pedidos_cliente_adapter);
-            ListViewParaPedidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    responderEventoClickEnItem(position);
-                }
-            });
-        }else {
-            Toast.makeText(this, "Sorry, No tienes pedidos registrados xD", Toast.LENGTH_LONG).show();
-        }
-
-
-    }
-
-    public void responderEventoClickEnItem(int position){
-        String uidDeliver = pedidosDelCliente.get(position).getDeliver_uid();
-
-        // Necesario para un segundo evento, se remuevan los listeners y solo se mantenga el actual seleccionado.
-        if(nodoRepartidorActual!= null && valueEventDeliver!=null)
-            nodoRepartidorActual.removeEventListener(valueEventDeliver);
-        // Se vuelve a instanciar el Objeto
-        nodoRepartidorActual = FirebaseDatabase.getInstance().getReference().child("users").child(uidDeliver);
-        // Un evento para agregar los marcadores
-        valueEventDeliver = new ValueEventListener() {
+        nodoUserDeliver = firebaseDatabase.getReference().child("users").child(uid_deliver);
+        // Activar evento de cambio de Latitud y Longitud
+        nodoUserDeliver.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot objDeliver) {
-                if (objDeliver.exists()){
-                    anadeMarcador(objDeliver.child("latitude").getValue(Long.class),
-                            objDeliver.child("longitude").getValue(Long.class) );
-                }else {
-                    Log.v("Evento Item Click", "Sorry, No existe el deliver");
-                }
+                // Anadir el marcador al mapa
+                Log.e("Aviso", "Nueva latitud y longitud");
+                anadeMarcador(objDeliver.child("latitud").getValue(Double.class),objDeliver.child("longitud").getValue(Double.class));
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.v("Evento (Error)", databaseError.getMessage());
+
             }
-        };
-        nodoRepartidorActual.addValueEventListener(valueEventDeliver);
+        });
+
+
     }
+    // TODO: Aqui van los metodos para activar las notificaciones cuando el pedido está cerca xD
+    // [Code HERE]
+
 
 
     // Metodos generados por el MapBox Tutorial. Desconozco su funcionamiento (70% le entiendo) xD j3j3
@@ -195,9 +136,6 @@ public class MapaUbicacionPedido extends AppCompatActivity
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
                 addDestinationIconSymbolLayer(style);
-                // Preparar Listener y realizar acciones.
-                setupConfigurationThisActivity();
-
                 //                mapboxMap.addOnMapClickListener(MapaUbicacionPedido.this)
                 //                button = findViewById(R.id.btn_addmarker);
                 //                button.setOnClickListener(new View.OnClickListener() {
@@ -219,6 +157,9 @@ public class MapaUbicacionPedido extends AppCompatActivity
                 //                });
             }
         });
+        //Recupera los datos del Intent y activa el escucha
+        String uid_deliver = getIntent().getExtras().getString("uid_deliver");
+        iniciarListenerDeDeliverPosicion(uid_deliver);
     }
 
     private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
@@ -244,17 +185,18 @@ public class MapaUbicacionPedido extends AppCompatActivity
         return true;
     }
 
-    public void anadeMarcador(long latitude, long longitude){
+    public void anadeMarcador(double latitude, double longitude){
         //Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
         Point destinationPoint = Point.fromLngLat(latitude, longitude);
-        Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-                locationComponent.getLastKnownLocation().getLatitude());
+        //Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                //locationComponent.getLastKnownLocation().getLatitude());
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
         if (source != null) {
+            Log.e("Aviso", "Source.setGeoJson a ver si jala xD");
             source.setGeoJson(Feature.fromGeometry(destinationPoint));
         }
-        getRoute(originPoint, destinationPoint);
+        //getRoute(originPoint, destinationPoint);
     }
 
     private void getRoute(Point origin, Point destination) {
