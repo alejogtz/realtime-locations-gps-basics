@@ -43,12 +43,9 @@ public class MenuClienteActivity extends AppCompatActivity {
         });
 
         btn_comprar = (Button) findViewById(R.id.btn_comprar);
-        btn_comprar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //startListaPedidosActivity();
-                Toast.makeText(MenuClienteActivity.this, "Sin Funcionalidad", Toast.LENGTH_SHORT);
-            }
+        btn_comprar.setOnClickListener((view)->{
+            Intent intent = new Intent(MenuClienteActivity.this, CompraActivity.class);
+            startActivity(intent);
         });
 
     }

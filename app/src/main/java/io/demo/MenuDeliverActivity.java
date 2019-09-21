@@ -34,6 +34,8 @@ public class MenuDeliverActivity extends AppCompatActivity {
 
     //GPS
     FusedLocationProviderClient mFusedLocationProviderClient;
+
+    // Widgets
     Button btn_mapa;
 
     @Override
@@ -94,7 +96,7 @@ public class MenuDeliverActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         // ...
-                        Toast.makeText(MenuDeliverActivity.this, "Log out", Toast.LENGTH_SHORT);
+                        Toast.makeText(MenuDeliverActivity.this, "Log out", Toast.LENGTH_SHORT).show();
                     }
                 });
         super.onDestroy();

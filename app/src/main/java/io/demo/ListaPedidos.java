@@ -26,13 +26,15 @@ import io.demo.Models.Punto;
 
 public class ListaPedidos extends ListActivity {
 
-    // Variables
+    // Firebase
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference refPedidos;
     private DatabaseReference mPrueba;
 
+    // Adapter
     ArrayAdapter<String> pedidosAdapter;
 
+    // Live Data
     HashMap<String, Pedido> pedidos;
     ArrayList<String> pedidos_descripcion;
 
@@ -43,42 +45,30 @@ public class ListaPedidos extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_pedidos);
-
-        /** Instanciar Variables*/
-
+        // Live Data
         pedidos = new HashMap<String, Pedido>();
         pedidos_descripcion = new ArrayList<String>();
 
-        /**     Cargar el uid del current client */
-        Intent intent = getIntent();
-        usuario = intent.getStringExtra("user_uid");
-        /** //////////////////////////////////////////////*/
-
-
         setUpSystem();
-
-        // dummyPedidos();
     }
 
     private void setUpSystem() {
-
+        // Get all id's from this client
         refPedidos = database.getReference().child("cliente").child(usuario).child("pedidos");
         final DatabaseReference refNodoPedidos = database.getReference().child("pedidos");
 
         refPedidos.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                /** Generar un arreglo de los Datos de Firebase*/
+                // Generar un arreglo de los Datos de Firebase
                 for (DataSnapshot x: dataSnapshot.getChildren()){
-                    Log.v("Key:", x.getValue(String.class));
-                    pedidos_descripcion.add(x.getValue(String.class));
+                   pedidos_descripcion.add(x.getValue(String.class));
                 }
-                /** [Fin ]*/
 
-                /** Cargar la lista ui*/                    //          Contexto        Where
+                // Cargar la lista ui
                 pedidosAdapter = new ArrayAdapter<String>(ListaPedidos.this, R.layout.row_pedido, R.id.row_txt_pedido, pedidos_descripcion);
                 setListAdapter(pedidosAdapter);
-                /**[Fin]*/
+                // [Fin]
             }
 
             @Override
@@ -92,9 +82,7 @@ public class ListaPedidos extends ListActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot x: dataSnapshot.getChildren()){
                 //    if ( pedidos_descripcion.contains( x.getKey() ) ){
-
                         pedidos.put(x.getKey(), x.getValue(Pedido.class));
-
                  //   }
                 }
             }

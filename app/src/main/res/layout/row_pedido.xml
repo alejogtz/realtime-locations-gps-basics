@@ -6,8 +6,5 @@
     <TextView
         android:id="@+id/row_txt_pedido"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        />
-
+        android:layout_height="wrap_content"/>
 </LinearLayout>

@@ -189,15 +189,12 @@ public class MapaUbicacionPedido extends AppCompatActivity
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
+        // Style
         mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
-
                 addDestinationIconSymbolLayer(style);
-
-
-
 //                mapboxMap.addOnMapClickListener(MapaUbicacionPedido.this)
 //                button = findViewById(R.id.btn_addmarker);
 //                button.setOnClickListener(new View.OnClickListener() {
@@ -212,13 +209,13 @@ public class MapaUbicacionPedido extends AppCompatActivity
 //                        NavigationLauncher.startNavigation(MapaUbicacionPedido.this, options);
 //                    }
 //                });
-                /*button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                });*/
-            }  // ------------> End OnStyleLoaded
+//                button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//
+//                    }
+//                });
+            }// ------------> End OnStyleLoaded
         });
     }
 
