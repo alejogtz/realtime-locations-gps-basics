@@ -214,7 +214,7 @@ public class MapaDestinos extends AppCompatActivity
         return true;
     }
 
-    public void anadeMarcador(long latitude, long longitude){
+    public void anadeMarcador(double latitude, double longitude){
         //Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
         Point destinationPoint = Point.fromLngLat(latitude, longitude);
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),

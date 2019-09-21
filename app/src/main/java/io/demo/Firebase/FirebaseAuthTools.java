@@ -17,7 +17,7 @@ public class FirebaseAuthTools {
         DatabaseReference nodoPedido = firebaseDatabase.getReference();
         Pedido datos = new Pedido();
         datos.setCliente_uid(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        // TODO: Escribe el monto
+        //Escribe el monto
         // datos.setCosto();
         // datos.setDescripcion();
         datos.setStatus(Pedido.SIN_PROCESAR);

@@ -2,18 +2,18 @@ package io.demo.Models;
 
 public class Punto {
 
-    private long latitud;
-    private long longitud;
+    private double latitud;
+    private double longitud;
 
     public Punto() {
     }
 
-    public Punto(int latitud, int longitud) {
+    public Punto(double latitud, double longitud) {
         this.latitud = latitud;
         this.longitud = longitud;
     }
 
-    public long getLatitud() {
+    public double getLatitud() {
         return latitud;
     }
 
@@ -21,7 +21,7 @@ public class Punto {
         this.latitud = latitud;
     }
 
-    public long getLongitud() {
+    public double getLongitud() {
         return longitud;
     }
 

@@ -120,4 +120,13 @@ public class Pedido implements Serializable {
     public void setCliente_uid(String cliente_uid) {
         this.cliente_uid = cliente_uid;
     }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "descripcion='" + descripcion + '\'' +
+                ", costo=" + costo +
+                ", status=" + status +
+                '}';
+    }
 }

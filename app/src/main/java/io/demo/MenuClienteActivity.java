@@ -13,6 +13,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import io.demo.DummyData.FakePedidos;
 import io.demo.DummyData.FakeUsers;
 
 
@@ -29,6 +30,8 @@ public class MenuClienteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu_cliente);
 
         initComponents();
+
+        FakePedidos.insertar();
     }
 
 
