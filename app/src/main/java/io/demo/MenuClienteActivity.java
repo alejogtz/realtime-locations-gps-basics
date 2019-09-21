@@ -6,7 +6,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
+import io.demo.DummyData.FakeUsers;
 
 
 public class MenuClienteActivity extends AppCompatActivity {
@@ -55,14 +62,14 @@ public class MenuClienteActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        /**AuthUI.getInstance()
+        AuthUI.getInstance()
          .signOut(this)
          .addOnCompleteListener(new OnCompleteListener<Void>() {
          public void onComplete(@NonNull Task<Void> task) {
          // ...
          Toast.makeText(MenuClienteActivity.this, "Log out", Toast.LENGTH_SHORT);
          }
-         });*/
+         });
         super.onDestroy();
     }
 

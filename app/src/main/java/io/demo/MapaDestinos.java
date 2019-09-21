@@ -2,10 +2,22 @@ package io.demo;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 // classes needed to initialize map
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -34,6 +46,9 @@ import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+
+import io.demo.Models.Pedido;
+import io.demo.Models.Punto;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,7 +63,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 
-
+/**
+ * Aquí los repartidores pueden ver la lista de todos los pedidos
+ * y en verde los que son suyos y ver el destino del pedido, es decir a que lugar hay que ir a dejarlo*/
 public class MapaDestinos extends AppCompatActivity
         implements OnMapReadyCallback,
         MapboxMap.OnMapClickListener, PermissionsListener {
@@ -70,15 +87,68 @@ public class MapaDestinos extends AppCompatActivity
     // Firebase
 
 
+    // ListView
+    ListView listaTusPedidos;
+    ArrayAdapter<String> pedidos_descripcion;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_mapa_destinos);
-        mapView = findViewById(R.id.mapView2);
+        mapView = findViewById(R.id.mapViewX);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+
+        listaTusPedidos = findViewById(R.id.destinos_listview);
+    }
+
+
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference refPedidos;
+    ArrayList<Pedido> listPedidos; // Todos los pedidos disponibles
+    ArrayList<String> descripciones; // Todos los pedidos disponibles
+    private void cargarListaPedidos(){
+        // Se necesita saber la lista de pedidos realizados
+        listPedidos = new ArrayList<>();
+        // String uid =  FirebaseAuth.getInstance().getCurrentUser().getUid();
+        refPedidos = firebaseDatabase.getReference().child("pedidos");
+
+        refPedidos.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot p: dataSnapshot.getChildren()){
+                        listPedidos.add(p.getValue(Pedido.class));
+                }
+                cargarViewPedidos();
+            }
+            @Override public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+        // Se necesita saber el uid de cada pedido
+        // Se necesita iniciar un listener a cada cambio de posicion del usuario con el uid seleccionado
+    }
+
+    public void cargarViewPedidos(){
+        for (Pedido p: listPedidos)  descripciones.add(p.getDescripcion());
+
+        if (listPedidos.size() != 0) {
+            pedidos_descripcion = new ArrayAdapter<>(this, R.layout.row_pedido, R.id.row_txt_pedido, descripciones);
+            listaTusPedidos.setAdapter(pedidos_descripcion);
+
+            listaTusPedidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    Pedido p = listPedidos.get(position);
+                    anadeMarcador(p.getLocation().getLatitud(), p.getLocation().getLongitud());
+                }
+            });
+        }else {
+            Toast.makeText(this, "Sorry, No tienes pedidos registrados xD", Toast.LENGTH_LONG).show();
+        }
 
 
     }
@@ -113,6 +183,8 @@ public class MapaDestinos extends AppCompatActivity
 //
 //                    }
 //                });
+                cargarListaPedidos(); // Se cargan al arraylist
+
             }  // ------------> End OnStyleLoaded
         });
     }
@@ -135,16 +207,16 @@ public class MapaDestinos extends AppCompatActivity
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
-        anadeMarcador(point);
+        anadeMarcador((long)point.getLatitude(), (long) point.getLongitude());
 
         //button.setEnabled(true);
         //button.setBackgroundResource(R.color.mapboxBlue);
         return true;
     }
 
-    public void anadeMarcador(LatLng point){
-
-        Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+    public void anadeMarcador(long latitude, long longitude){
+        //Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+        Point destinationPoint = Point.fromLngLat(latitude, longitude);
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
 

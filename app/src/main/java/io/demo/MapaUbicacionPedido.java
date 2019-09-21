@@ -95,15 +95,15 @@ public class MapaUbicacionPedido extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-        setContentView(R.layout.activity_mapa_ubicacion_pedido);
-        mapView = findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-
-        listaTusPedidos = findViewById(R.id.mup_list_pedidos);
-
-        cargarListaPedidos();
+//        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+//        setContentView(R.layout.activity_mapa_ubicacion_pedido);
+//        mapView = findViewById(R.id.mapView);
+//        mapView.onCreate(savedInstanceState);
+//        mapView.getMapAsync(this);
+//
+//        listaTusPedidos = findViewById(R.id.mup_list_pedidos);
+//
+//        cargarListaPedidos();
 
     }
 
@@ -139,6 +139,7 @@ public class MapaUbicacionPedido extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     anadeMarcador( dataSnapshot.child("latitude").getValue(Long.class), dataSnapshot.child("longitude").getValue(Long.class) );
+
                 }else {
                     Log.v("Evento Item Click", "Sorry, No existe el deliver");
                 }
@@ -158,7 +159,8 @@ public class MapaUbicacionPedido extends AppCompatActivity
 
     ArrayList<Pedido> listPedidos;
     ArrayList<String> listUids; // Puede ser innecesario // son los uids del deliver
-    public void cargarListaPedidos(){
+
+    private void cargarListaPedidos(){
         // Se necesita saber la lista de pedidos realizados
         listPedidos = new ArrayList<>();
         listUids = new ArrayList<>();

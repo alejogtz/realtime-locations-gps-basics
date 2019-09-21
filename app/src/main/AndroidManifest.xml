@@ -12,7 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ClienteComprar"></activity>
+        <activity android:name=".CompraActivity"></activity>
+        <activity
+            android:name=".MenuNavegador"
+            android:label="@string/title_activity_menu_navegador"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CatalogoComida" />
+
+        <service
+            android:name=".GpsTracking"
+            android:exported="false" />
+
+        <activity android:name=".ClienteComprar" />
         <activity android:name=".MapaDestinos" />
         <activity android:name=".MenuDeliverActivity" />
         <activity

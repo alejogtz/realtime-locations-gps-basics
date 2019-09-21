@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -17,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import io.demo.DummyData.FakeUsers;
+
 public class MainActivity extends AppCompatActivity {
 
     private final static int LOGIN_PERMISSION = 1000;
@@ -28,25 +32,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // TOOD: Code here [Start]
-
-        btnLogin = (Button)findViewById(R.id.btn_login);
-        btnLogin.setOnClickListener(view -> startActivityForResult(AuthUI.getInstance().
-                createSignInIntentBuilder().build(), LOGIN_PERMISSION));
-
-        // [END]
+        //        btnLogin = (Button) findViewById(R.id.btn_login);
+        //        btnLogin.setOnClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View view) {
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), LOGIN_PERMISSION);
+        //
+        //            }
+        //        });
+                // [END]
 
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == LOGIN_PERMISSION){
+        if (requestCode == LOGIN_PERMISSION) {
             startNewActivity(requestCode, resultCode, data);
-        }else {
+        } else {
             Toast.makeText(MainActivity.this, "Login Failed!!!", Toast.LENGTH_SHORT);
         }
     }
@@ -55,10 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
 
-    private void startNewActivity(int requestCode, int resultCode, Intent data){
-        if (resultCode == RESULT_OK){
-            // TODO: [Code Here ]
-            // Logica para llevar a un activity o a otro.
+    private void startNewActivity(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
             String uid = null;
 
             // Firebase
@@ -69,27 +72,24 @@ public class MainActivity extends AppCompatActivity {
             mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String rol = (String)dataSnapshot.child("rol").getValue();
-
+                    String rol = (String) dataSnapshot.child("rol").getValue();
                     // Launch new Activity
                     launchActivity(rol);
                 }
 
-                @Override public void onCancelled(@NonNull DatabaseError databaseError) {}
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
             });
         }
     }
 
-    public void launchActivity(String rol){
+    public void launchActivity(String rol) {
         Intent intent = null;
-
-        if (rol.equals("Cliente")){
-            // intent = new Intent(MainActivity.this, MenuClienteActivity.class);
+        if (rol.equals("Cliente")) {
             intent = new Intent(MainActivity.this, MenuClienteActivity.class);
-
-        }else if (rol.equals("Deliver")) {
-            //intent = new Intent(MainActivity.this, MenuDeliverActivity.class);
-            intent = new Intent(MainActivity.this, MenuClienteActivity.class);
+        } else {
+            intent = new Intent(MainActivity.this, MenuDeliverActivity.class);
         }
 
         startActivity(intent);
