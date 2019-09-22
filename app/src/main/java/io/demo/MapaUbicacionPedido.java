@@ -100,6 +100,8 @@ public class MapaUbicacionPedido extends AppCompatActivity
 
     }
 
+    //Firebase
+
     // TODO: Pendiente, no agrega el marcador correctamente xD
     private void iniciarListenerDeDeliverPosicion(String uid_deliver) {
         // Firebase
@@ -110,7 +112,7 @@ public class MapaUbicacionPedido extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot objDeliver) {
                 // Anadir el marcador al mapa
                 Log.e("Aviso", "Nueva latitud y longitud");
-                anadeMarcador(objDeliver.child("latitud").getValue(Double.class),objDeliver.child("longitud").getValue(Double.class));
+                // anadeMarcador(objDeliver.child("latitud").getValue(Double.class),objDeliver.child("longitud").getValue(Double.class));
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -120,121 +122,125 @@ public class MapaUbicacionPedido extends AppCompatActivity
 
 
     }
+    // << Codigo Colapsado >>
     // TODO: Aqui van los metodos para activar las notificaciones cuando el pedido está cerca xD
     // [Code HERE]
 
 
+    // MapBox
 
-    // Metodos generados por el MapBox Tutorial. Desconozco su funcionamiento (70% le entiendo) xD j3j3
+//    @Override
+//    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
+//        this.mapboxMap = mapboxMap;
+//        // Style
+//        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
+//            @Override
+//            public void onStyleLoaded(@NonNull Style style) {
+//                enableLocationComponent(style);
+//                addDestinationIconSymbolLayer(style);
+//                //                mapboxMap.addOnMapClickListener(MapaUbicacionPedido.this)
+//                //                button = findViewById(R.id.btn_addmarker);
+//                //                button.setOnClickListener(new View.OnClickListener() {
+//                //                    @Override
+//                //                    public void onClick(View v) {
+//                //                        boolean simulateRoute = true;
+//                //                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+//                //                                .directionsRoute(currentRoute)
+//                //                                .shouldSimulateRoute(simulateRoute)
+//                //                                .build();
+//                //                        // Call this method with Context from within an Activity
+//                //                        NavigationLauncher.startNavigation(MapaUbicacionPedido.this, options);
+//                //                    }
+//                //                });
+//                //                button.setOnClickListener(new View.OnClickListener() {
+//                //                    @Override
+//                //                    public void onClick(View view) {
+//                //                    }
+//                //                });
+//            }
+//        });
+//        //Recupera los datos del Intent y activa el escucha
+//        String uid_deliver = getIntent().getExtras().getString("uid_deliver");
+//        iniciarListenerDeDeliverPosicion(uid_deliver);
+//    }
+//
+//    private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
+//        loadedMapStyle.addImage("destination-icon-id",
+//                BitmapFactory.decodeResource(this.getResources(), R.drawable.mapbox_marker_icon_default));
+//        GeoJsonSource geoJsonSource = new GeoJsonSource("destination-source-id");
+//        loadedMapStyle.addSource(geoJsonSource);
+//        SymbolLayer destinationSymbolLayer = new SymbolLayer("destination-symbol-layer-id", "destination-source-id");
+//        destinationSymbolLayer.withProperties(
+//                iconImage("destination-icon-id"),
+//                iconAllowOverlap(true),
+//                iconIgnorePlacement(true)
+//        );
+//        loadedMapStyle.addLayer(destinationSymbolLayer);
+//    }
+//
+//    @SuppressWarnings( {"MissingPermission"})
+//    @Override
+//    public boolean onMapClick(@NonNull LatLng point) {
+//        //anadeMarcador(point);
+//        //button.setEnabled(true);
+//        //button.setBackgroundResource(R.color.mapboxBlue);
+//        return true;
+//    }
+//
+//    public void anadeMarcador(double latitude, double longitude){
+//        //Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+//        Point destinationPoint = Point.fromLngLat(latitude, longitude);
+//        //Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+//                //locationComponent.getLastKnownLocation().getLatitude());
+//
+//        GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
+//        if (source != null) {
+//            Log.e("Aviso", "Source.setGeoJson a ver si jala xD");
+//            source.setGeoJson(Feature.fromGeometry(destinationPoint));
+//        }
+//        //getRoute(originPoint, destinationPoint);
+//    }
+//
+//    private void getRoute(Point origin, Point destination) {
+//        NavigationRoute.builder(this)
+//                .accessToken(Mapbox.getAccessToken())
+//                .origin(origin)
+//                .destination(destination)
+//                .build()
+//                .getRoute(new Callback<DirectionsResponse>() {
+//                    @Override
+//                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+//                        // You can get the generic HTTP info about the response
+//                        Log.d(TAG, "Response code: " + response.code());
+//                        if (response.body() == null) {
+//                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+//                            return;
+//                        } else if (response.body().routes().size() < 1) {
+//                            Log.e(TAG, "No routes found");
+//                            return;
+//                        }
+//
+//                        currentRoute = response.body().routes().get(0);
+//
+//                        // Draw the route on the map
+//                        if (navigationMapRoute != null) {
+//                            navigationMapRoute.removeRoute();
+//                        } else {
+//                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+//                        }
+//                        navigationMapRoute.addRoute(currentRoute);
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+//                        Log.e(TAG, "Error: " + throwable.getMessage());
+//                    }
+//                });
+//    }
 
-    @Override
-    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
-        this.mapboxMap = mapboxMap;
-        // Style
-        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                enableLocationComponent(style);
-                addDestinationIconSymbolLayer(style);
-                //                mapboxMap.addOnMapClickListener(MapaUbicacionPedido.this)
-                //                button = findViewById(R.id.btn_addmarker);
-                //                button.setOnClickListener(new View.OnClickListener() {
-                //                    @Override
-                //                    public void onClick(View v) {
-                //                        boolean simulateRoute = true;
-                //                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                //                                .directionsRoute(currentRoute)
-                //                                .shouldSimulateRoute(simulateRoute)
-                //                                .build();
-                //                        // Call this method with Context from within an Activity
-                //                        NavigationLauncher.startNavigation(MapaUbicacionPedido.this, options);
-                //                    }
-                //                });
-                //                button.setOnClickListener(new View.OnClickListener() {
-                //                    @Override
-                //                    public void onClick(View view) {
-                //                    }
-                //                });
-            }
-        });
-        //Recupera los datos del Intent y activa el escucha
-        String uid_deliver = getIntent().getExtras().getString("uid_deliver");
-        iniciarListenerDeDeliverPosicion(uid_deliver);
-    }
+    // Location Manager
+    // -    - - -  - -  - -  -
 
-    private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
-        loadedMapStyle.addImage("destination-icon-id",
-                BitmapFactory.decodeResource(this.getResources(), R.drawable.mapbox_marker_icon_default));
-        GeoJsonSource geoJsonSource = new GeoJsonSource("destination-source-id");
-        loadedMapStyle.addSource(geoJsonSource);
-        SymbolLayer destinationSymbolLayer = new SymbolLayer("destination-symbol-layer-id", "destination-source-id");
-        destinationSymbolLayer.withProperties(
-                iconImage("destination-icon-id"),
-                iconAllowOverlap(true),
-                iconIgnorePlacement(true)
-        );
-        loadedMapStyle.addLayer(destinationSymbolLayer);
-    }
-
-    @SuppressWarnings( {"MissingPermission"})
-    @Override
-    public boolean onMapClick(@NonNull LatLng point) {
-        //anadeMarcador(point);
-        //button.setEnabled(true);
-        //button.setBackgroundResource(R.color.mapboxBlue);
-        return true;
-    }
-
-    public void anadeMarcador(double latitude, double longitude){
-        //Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-        Point destinationPoint = Point.fromLngLat(latitude, longitude);
-        //Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-                //locationComponent.getLastKnownLocation().getLatitude());
-
-        GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
-        if (source != null) {
-            Log.e("Aviso", "Source.setGeoJson a ver si jala xD");
-            source.setGeoJson(Feature.fromGeometry(destinationPoint));
-        }
-        //getRoute(originPoint, destinationPoint);
-    }
-
-    private void getRoute(Point origin, Point destination) {
-        NavigationRoute.builder(this)
-                .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .destination(destination)
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        // You can get the generic HTTP info about the response
-                        Log.d(TAG, "Response code: " + response.code());
-                        if (response.body() == null) {
-                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
-                            return;
-                        } else if (response.body().routes().size() < 1) {
-                            Log.e(TAG, "No routes found");
-                            return;
-                        }
-
-                        currentRoute = response.body().routes().get(0);
-
-                        // Draw the route on the map
-                        if (navigationMapRoute != null) {
-                            navigationMapRoute.removeRoute();
-                        } else {
-                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
-                        }
-                        navigationMapRoute.addRoute(currentRoute);
-                    }
-
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                        Log.e(TAG, "Error: " + throwable.getMessage());
-                    }
-                });
-    }
 
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
@@ -271,6 +277,26 @@ public class MapaUbicacionPedido extends AppCompatActivity
             Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
             finish();
         }
+    }
+
+    // MapBox
+
+    @Override
+    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
+        this.mapboxMap = mapboxMap;
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
+            //create this function & code further stuff there
+            initMapStuff(style);
+        });
+    }
+
+    private void initMapStuff(Style style) {
+
+    }
+
+    @Override
+    public boolean onMapClick(@NonNull LatLng point) {
+        return false;
     }
 
     @Override
@@ -314,4 +340,6 @@ public class MapaUbicacionPedido extends AppCompatActivity
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
+
 }

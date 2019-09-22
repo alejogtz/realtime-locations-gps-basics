@@ -32,9 +32,6 @@ public class MenuDeliverActivity extends AppCompatActivity {
     FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
     DatabaseReference mDatabaseReference;
 
-    //GPS
-    FusedLocationProviderClient mFusedLocationProviderClient;
-
     // Widgets
     Button btn_mapa;
 
@@ -59,36 +56,6 @@ public class MenuDeliverActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MapaDestinos.class);
         startActivity(intent);
     }
-
-//    public void iniciarGPS(){
-//        //Map
-//        Map<String, Object> map = new HashMap();
-//
-//        // Firebase
-//        mDatabaseReference = mFirebaseDatabase.getReference();
-//
-//        // GPS
-//        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-//        mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//            @Override
-//            public void onSuccess(Location location) {
-//                if (location!=null){
-//                    map.put("Latitude", location.getLatitude());
-//                    map.put("Longitude", location.getLongitude());
-//                    mDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(map);
-//                    map.clear(); // Para el siguiente cambio de localizacion no se encime v:
-//
-//                    Log.v("Cambio de Localizacion", location.getLatitude() + " | " + location.getLongitude());
-//
-//                }else {
-//                    Log.e("Location error : ", "'location' es Null");
-//                }
-//            }
-//        });
-//
-//    }
-
-
     @Override
     protected void onDestroy() {
 //        AuthUI.getInstance()
