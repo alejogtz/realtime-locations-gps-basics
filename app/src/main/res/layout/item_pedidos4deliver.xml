@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/itemdeliver_txtdescripcion"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_weight="1"
+        android:background="#B7C9B6"
+        android:gravity="center"
+        android:text="Descripcion"
+        android:textSize="30sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/itemdeliver_btnaceptar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#8BC34A"
+            android:fontFamily="sans-serif"
+            android:text="Aceptar"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/itemdeliver_vermapa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#00BCD4"
+            android:fontFamily="sans-serif"
+            android:text="Ver Mapa"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
