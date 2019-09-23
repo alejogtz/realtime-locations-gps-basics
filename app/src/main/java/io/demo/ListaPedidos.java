@@ -93,7 +93,7 @@ public class ListaPedidos extends ListActivity {
         if (pedidosDelCliente.size() != 0) {
             // TODO: Crear Adapter Personalizado para los items de Pedido.
             pedidos_cliente_adapter = new ArrayAdapter<Pedido>(this,
-                    android.R.layout.simple_list_item_1, pedidosDelCliente);
+                    R.layout.item_cliente_pedido, R.id.pedidocliente_descripcionpedido, pedidosDelCliente);
             this.setListAdapter(pedidos_cliente_adapter);
         } else {
             Toast.makeText(this, "Sorry, No tienes pedidos registrados xD", Toast.LENGTH_LONG).show();
