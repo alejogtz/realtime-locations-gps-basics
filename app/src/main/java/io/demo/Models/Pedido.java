@@ -102,10 +102,9 @@ public class Pedido implements Serializable {
 
     @Override
     public String toString() {
-        return "Pedido{" +
-                "descripcion='" + descripcion + '\'' +
-                ", costo=" + costo +
-                ", status=" + status +
+        return  "{descripcion: '" + descripcion + "\n" +
+                "Monto: " + costo + "\n"+
+                "Estado" + status +
                 '}';
     }
 }
