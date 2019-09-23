@@ -57,19 +57,21 @@ public class ListaPedidos extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         // Abrir otro activity
         String uidDeliver = pedidosDelCliente.get(position).getDeliver_uid();
-        Intent abrirMapaIntent = new Intent(ListaPedidos.this, GoogleMapsActivity.class);
-        abrirMapaIntent.putExtra("deliver_uid", uidDeliver);
-        Log.v("Log...", uidDeliver);
-        startActivity(abrirMapaIntent);
-
+        if (uidDeliver != null && !uidDeliver.equals("") ) {
+            Intent abrirMapaIntent = new Intent(ListaPedidos.this, GoogleMapsActivity.class);
+            abrirMapaIntent.putExtra("deliver_uid", uidDeliver);
+            Log.v("Log...", uidDeliver);
+            startActivity(abrirMapaIntent);
+        }else
+            Toast.makeText(this, "Sorry, Este pedido aun esta por procesar xD", Toast.LENGTH_LONG).show();
     }
 
     // Cargas las listas de >>Data Alive<<
-    private void setupConfigurationThisActivity(){
+    private void setupConfigurationThisActivity() {
         // Se necesita saber la lista de pedidos realizados
         pedidosDelCliente = new ArrayList<>();
         // Firebase
-        String uid =  FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         nodoPedidos = firebaseDatabase.getReference().child("pedidos");
         nodoPedidos.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -80,17 +82,20 @@ public class ListaPedidos extends ListActivity {
                 }
                 cargarListViewDePedidos();
             }
-            @Override public void onCancelled(@NonNull DatabaseError databaseError) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
         });
     }
 
-    public void cargarListViewDePedidos(){
+    public void cargarListViewDePedidos() {
         if (pedidosDelCliente.size() != 0) {
             // TODO: Crear Adapter Personalizado para los items de Pedido.
             pedidos_cliente_adapter = new ArrayAdapter<Pedido>(this,
                     android.R.layout.simple_list_item_1, pedidosDelCliente);
             this.setListAdapter(pedidos_cliente_adapter);
-        }else {
+        } else {
             Toast.makeText(this, "Sorry, No tienes pedidos registrados xD", Toast.LENGTH_LONG).show();
         }
     }

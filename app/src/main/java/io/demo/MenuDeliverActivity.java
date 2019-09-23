@@ -1,14 +1,16 @@
 package io.demo;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,18 +18,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MenuDeliverActivity extends AppCompatActivity{
 
@@ -54,13 +56,6 @@ public class MenuDeliverActivity extends AppCompatActivity{
         setContentView(R.layout.activity_menu_deliver);
 
         // Widgets
-        btn_mapa= (Button)findViewById(R.id.btn_pedidos_disponibles);
-        btn_mapa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                abrirActivity();
-            }
-        });
         btn_irPedidos = findViewById(R.id.btn_verpedidos_aceptados);
         btn_irPedidos.setOnClickListener(view->{
             Intent intent = new Intent(MenuDeliverActivity.this, ListaPedidosDeliver.class );
@@ -116,7 +111,6 @@ public class MenuDeliverActivity extends AppCompatActivity{
         });
     }
 
-
     private void iniciarGpsTracking() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -134,23 +128,36 @@ public class MenuDeliverActivity extends AppCompatActivity{
         });
     }
 
-    private void abrirActivity() {
-        Intent intent = new Intent(this, MapsDestinosActivity.class);
-        startActivity(intent);
+    private void logout(){
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                        Toast.makeText(MenuDeliverActivity.this, "Log out", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        finish();
     }
+
     @Override
-    protected void onDestroy() {
-//        AuthUI.getInstance()
-//                .signOut(this)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        // ...
-//                        Toast.makeText(MenuDeliverActivity.this, "Log out", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-        super.onDestroy();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_navegador, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                logout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }
