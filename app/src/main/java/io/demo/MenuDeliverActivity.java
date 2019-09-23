@@ -1,18 +1,28 @@
 package io.demo;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,13 +32,22 @@ import java.util.Map;
 public class MenuDeliverActivity extends AppCompatActivity{
 
     //Firebase
-    FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-    DatabaseReference nodoUsuarioActual;
+    private FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference nodoUsuarioActual;
+
+    private DatabaseReference nodoPedidos;
+
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     // Widgets
     Button btn_mapa;
     Button btn_irPedidos;
 
+    // Notificaciones
+    private final static String CHANEL_ID = "NOTIFICACION";
+    private final static int NOTIFICATION_ID = 0;
+
+    //-------------------------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,9 +72,49 @@ public class MenuDeliverActivity extends AppCompatActivity{
 
         // Arrancar GPS Tracking
         iniciarGpsTracking();
+
+
+        // Notificacion: Escuchar eventos de nuevos pedidos
+        lanzarUnaNotificacion();
+        iniciarEventoNotificacion();
+
+
+    }//-----------------------------------------------------------------------------------------------------------
+
+    private void lanzarUnaNotificacion(){
+        NotificationCompat.Builder builder =  new NotificationCompat.Builder(getApplicationContext(), CHANEL_ID);
+        builder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+        builder.setContentTitle("Nuevos Pedidos!!!");
+        builder.setContentText("Se han agregado nuevos pedidos, Corre a apuntarte xD");
+        builder.setColor(Color.YELLOW);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setLights(Color.MAGENTA, 1000, 1000);
+        builder.setDefaults(Notification.DEFAULT_SOUND);
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from( getApplicationContext());
+        notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
     }
 
-    FusedLocationProviderClient mFusedLocationProviderClient;
+    private void iniciarEventoNotificacion() {
+        nodoPedidos = mFirebaseDatabase.getReference().child("pedidos");
+        nodoPedidos.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                lanzarUnaNotificacion();
+            }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
 
 
     private void iniciarGpsTracking() {
