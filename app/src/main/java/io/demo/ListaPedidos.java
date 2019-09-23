@@ -57,8 +57,8 @@ public class ListaPedidos extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         // Abrir otro activity
         String uidDeliver = pedidosDelCliente.get(position).getDeliver_uid();
-        Intent abrirMapaIntent = new Intent(ListaPedidos.this, MapaUbicacionPedido.class);
-        abrirMapaIntent.putExtra("uid_deliver", uidDeliver);
+        Intent abrirMapaIntent = new Intent(ListaPedidos.this, GoogleMapsActivity.class);
+        abrirMapaIntent.putExtra("deliver_uid", uidDeliver);
         Log.v("Log...", uidDeliver);
         startActivity(abrirMapaIntent);
 

@@ -11,10 +11,10 @@ public class Pedido implements Serializable {
     private String id; // [Opcional]
 
     private String descripcion;
-    private int costo;
+    private double costo;
 
-    private Punto location;
-    private Punto destino;
+
+    private Punto location;     // Corresponde al punto de entrega xD
 
     private String fecha_entrega;
     private String fecha_realizacion;
@@ -26,19 +26,6 @@ public class Pedido implements Serializable {
     private int status;
 
     public Pedido() {
-    }
-
-    public Pedido(String id, String descripcion, int costo, Punto location, Punto destino, String fecha_entrega, String fecha_realizacion, String deliver_uid, String cliente_uid, int status) {
-        this.id = id;
-        this.descripcion = descripcion;
-        this.costo = costo;
-        this.location = location;
-        this.destino = destino;
-        this.fecha_entrega = fecha_entrega;
-        this.fecha_realizacion = fecha_realizacion;
-        this.deliver_uid = deliver_uid;
-        this.cliente_uid = cliente_uid;
-        this.status = status;
     }
 
     public String getId() {
@@ -57,11 +44,11 @@ public class Pedido implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public int getCosto() {
+    public double getCosto() {
         return costo;
     }
 
-    public void setCosto(int costo) {
+    public void setCosto(double costo) {
         this.costo = costo;
     }
 
@@ -71,14 +58,6 @@ public class Pedido implements Serializable {
 
     public void setLocation(Punto location) {
         this.location = location;
-    }
-
-    public Punto getDestino() {
-        return destino;
-    }
-
-    public void setDestino(Punto destino) {
-        this.destino = destino;
     }
 
     public String getFecha_entrega() {
